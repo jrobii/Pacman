@@ -10,6 +10,7 @@ grey = (107, 107, 107)
 class App:
     def __init__(self):
         self.screen = pygame.display.set_mode((width, height))
+        self.clock = pygame.time.Clock()
         self.running = True
         self.load()
         self.cell_width = width//28
@@ -18,22 +19,29 @@ class App:
         self.player = Player(self, vec(1, 1))
         self.run()
         
-        
-
     def run(self):
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
             if self.state == 1:
+                self.get_events()
                 self.draw()
             else:
                 self.running = False
         pygame.quit()
         sys.exit()
-    
-    def get_event(self):
-        pass
+
+    def get_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.player.move(vec(-1, 0))
+                if event.key == pygame.K_RIGHT:
+                    self.player.move(vec(1, 0))
+                if event.key == pygame.K_UP:
+                    self.player.move(vec(0, -1))
+                if event.key == pygame.K_DOWN:
+                    self.player.move(vec(0, 1))
     
     def load(self):
         self.background = pygame.image.load('maze.png')
@@ -49,5 +57,7 @@ class App:
         self.screen.blit(self.background, (0, 0))
         self.draw_grid()
         self.player.draw()
+        self.player.update()
+        self.clock.tick(120)
         pygame.display.update()
 

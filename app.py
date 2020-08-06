@@ -12,6 +12,7 @@ class App:
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.running = True
+        self.walls = []
         self.load()
         self.cell_width = width//28
         self.cell_height = height//30
@@ -46,6 +47,12 @@ class App:
     def load(self):
         self.background = pygame.image.load('maze.png')
         self.background = pygame.transform.scale(self.background, (width, height))
+        
+        with open("maze_info.txt", "r") as file:
+            for yidx, line in enumerate(file):
+                for xidx, char in enumerate(line):
+                    if char == "1":
+                        self.walls.append(vec(xidx, yidx))
 
     def draw_grid(self):
         for x in range(width//self.cell_width):

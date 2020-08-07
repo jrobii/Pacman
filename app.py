@@ -40,13 +40,13 @@ class App:
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.player.move(vec(-1, 0))
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.player.move(vec(1, 0))
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.player.move(vec(0, -1))
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.player.move(vec(0, 1))
     
     def load(self):

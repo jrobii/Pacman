@@ -1,8 +1,10 @@
 import pygame, sys
 from player import *
+from dots import *
 from pygame.math import Vector2 as vec
 
 pygame.init()
+pygame.display.set_caption("Pac-Man")
 width = 560
 height = 620
 grey = (107, 107, 107)
@@ -13,11 +15,13 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
         self.walls = []
-        self.load()
+        self.dots = []
         self.cell_width = width//28
         self.cell_height = height//30
         self.state = 1 #1=playing 0=game over
+        self.load()
         self.player = Player(self, vec(1, 1))
+        self.dot = Dot(self, self.dots)
         self.run()
         
     def run(self):
@@ -53,6 +57,9 @@ class App:
                 for xidx, char in enumerate(line):
                     if char == "1":
                         self.walls.append(vec(xidx, yidx))
+                    elif char == "C":
+                        self.dots.append(vec(xidx, yidx))
+    
 
     def draw_grid(self):
         for x in range(width//self.cell_width):
@@ -64,6 +71,7 @@ class App:
         self.screen.blit(self.background, (0, 0))
         self.draw_grid()
         self.player.draw()
+        self.dot.draw()
         self.player.update()
         self.clock.tick(120)
         pygame.display.update()

@@ -7,7 +7,7 @@ class Player:
         self.app = app
         self.grid_pos = pos
         self.pix_pos = self.get_pix_pos()
-        self.dir = vec(1, 0)
+        self.dir = vec(0, 1)
         self.stored_dir = None
         self.can_move = True
         
@@ -15,16 +15,18 @@ class Player:
     def get_pix_pos(self):
         return vec((self.grid_pos.x*self.app.cell_width)+self.app.cell_width//2, 
         (self.grid_pos.y*self.app.cell_height)+self.app.cell_height//2)
-        
-
-                
+              
     def update(self):
+        if self.check_legal_move():
+            if self.stored_dir != None:
+                self.dir = self.stored_dir
+            if self.able_to_move == False:
+                self.stored_dir = None
+            else:
+                self.can_move = self.able_to_move()
         if self.can_move:
             self.pix_pos += self.dir
-        if self.check_legal_move():
-                if self.stored_dir != None:
-                    self.dir = self.stored_dir
-                self.can_move = self.able_to_move()
+            
         self.grid_pos.x = self.pix_pos.x//self.app.cell_width
         self.grid_pos.y = self.pix_pos.y//self.app.cell_height
 

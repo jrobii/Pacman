@@ -18,9 +18,10 @@ class App:
         self.dots = []
         self.cell_width = width//28
         self.cell_height = height//30
+        self.playerStart = vec()
         self.state = 1 #1=playing 0=game over
         self.load()
-        self.player = Player(self, vec(1, 1))
+        self.player = Player(self, self.playerStart)
         self.dot = Dot(self, self.dots)
         self.run()
         
@@ -59,6 +60,8 @@ class App:
                         self.walls.append(vec(xidx, yidx))
                     elif char == "C":
                         self.dots.append(vec(xidx, yidx))
+                    elif char == "P":
+                        self.playerStart = vec(xidx, yidx)
     
 
     def draw_grid(self):

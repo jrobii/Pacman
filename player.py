@@ -29,6 +29,11 @@ class Player:
             
         self.grid_pos.x = self.pix_pos.x//self.app.cell_width
         self.grid_pos.y = self.pix_pos.y//self.app.cell_height
+        self.removeDot()
+        
+    def removeDot(self):
+        if self.grid_pos in self.app.dots:
+            self.app.dots.remove(self.grid_pos)
 
     def check_legal_move(self):
         if int(self.pix_pos.x+self.app.cell_width//2) % self.app.cell_width == 0:

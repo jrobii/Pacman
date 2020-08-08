@@ -2,6 +2,7 @@ import pygame, sys
 from player import *
 from dots import *
 from pygame.math import Vector2 as vec
+from ghost import *
 
 pygame.init()
 pygame.display.set_caption("Pac-Man")
@@ -16,6 +17,8 @@ class App:
         self.running = True
         self.walls = []
         self.dots = []
+        self.ghosts = []
+        self.g_pos = []
         self.cell_width = width//28
         self.cell_height = height//30
         self.playerStart = vec()
@@ -23,19 +26,20 @@ class App:
         self.load()
         self.player = Player(self, self.playerStart)
         self.dot = Dot(self, self.dots)
+        self.makeEnemies()
         self.run()
         
     def run(self):
         while self.running:
             if self.state == 1:
-                self.get_events()
+                self.getEvents()
                 self.draw()
             else:
                 self.running = False
         pygame.quit()
         sys.exit()
 
-    def get_events(self):
+    def getEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -62,9 +66,14 @@ class App:
                         self.dots.append(vec(xidx, yidx))
                     elif char == "P":
                         self.playerStart = vec(xidx, yidx)
+                    elif char in ["2", "3", "4", "5"]:
+                        self.g_pos.append(vec(xidx, yidx))
     
+    def makeEnemies(self):
+        for pos in self.g_pos:
+            self.ghosts.append(Ghost(self, pos))
 
-    def draw_grid(self):
+    def drawGrid(self):
         for x in range(width//self.cell_width):
             pygame.draw.line(self.background, grey, (x*self.cell_width, 0), (x*self.cell_width, height))
         for y in range(height//self.cell_height):
@@ -72,9 +81,12 @@ class App:
     
     def draw(self):
         self.screen.blit(self.background, (0, 0))
-        self.draw_grid()
+        #self.drawGrid()
         self.player.draw()
         self.dot.draw()
+        for ghost in self.ghosts:
+            ghost.draw()
+            ghost.update()
         self.player.update()
         self.clock.tick(120)
         pygame.display.update()

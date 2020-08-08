@@ -68,6 +68,9 @@ class App:
                         self.playerStart = vec(xidx, yidx)
                     elif char in ["2", "3", "4", "5"]:
                         self.g_pos.append(vec(xidx, yidx))
+                    elif char == "B":
+                        pygame.draw.rect(self.background, (0, 0, 0), (xidx*self.cell_width, yidx*self.cell_height,
+                        self.cell_width, self.cell_height))
     
     def makeEnemies(self):
         for pos in self.g_pos:

@@ -10,7 +10,10 @@ class Player:
         self.dir = vec(0, 1)
         self.stored_dir = None
         self.can_move = True
-        
+        self.lifes = 3
+
+    def getLifes(self):
+        return self.lifes
     
     def get_pix_pos(self):
         return vec((self.grid_pos.x*self.app.cell_width)+self.app.cell_width//2, 

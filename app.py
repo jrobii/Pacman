@@ -3,6 +3,7 @@ from player import *
 from dots import *
 from pygame.math import Vector2 as vec
 from ghost import *
+from view import *
 
 pygame.init()
 pygame.display.set_caption("Pac-Man")
@@ -22,22 +23,37 @@ class App:
         self.cell_width = width//28
         self.cell_height = height//30
         self.playerStart = vec()
-        self.state = 1 #1=playing 0=game over
+        self.state = 0 #0=start 1=playing 2=game over
         self.load()
         self.player = Player(self, self.playerStart)
+        self.playerLives = self.player.getLifes();
         self.dot = Dot(self, self.dots)
+        self.view = View
         self.makeEnemies()
         self.run()
         
     def run(self):
         while self.running:
-            if self.state == 1:
+            if self.state == 0:
+                self.getStartEvents()
+                self.view.drawHomeScreen(self.screen)
+            elif self.state == 1:
                 self.getEvents()
                 self.draw()
+            elif self.state == 2:
+                pass
             else:
                 self.running = False
         pygame.quit()
         sys.exit()
+
+    def getStartEvents(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.state = 1
 
     def getEvents(self):
         for event in pygame.event.get():
@@ -55,7 +71,7 @@ class App:
     
     def load(self):
         self.background = pygame.image.load('maze.png')
-        self.background = pygame.transform.scale(self.background, (width, height))
+        self.background = pygame.transform.scale(self.background, (width, height-50))
         
         with open("maze_info.txt", "r") as file:
             for yidx, line in enumerate(file):
@@ -83,7 +99,8 @@ class App:
             pygame.draw.line(self.background, grey, (0, y*self.cell_height), (width, y*self.cell_height))
     
     def draw(self):
-        self.screen.blit(self.background, (0, 0))
+        self.view.drawBackground(self.background, self.screen)
+        self.view.drawPlayerLifes(self.background, self.screen)
         #self.drawGrid()
         self.player.draw()
         self.dot.draw()

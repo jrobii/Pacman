@@ -1,40 +1,23 @@
 import pygame
 import random
-
+from item import Item
 vec = pygame.math.Vector2
 
-class Ghost:
+class Ghost(Item):
     def __init__(self, app, pos):
-        self.app = app
-        self.gridPos = pos
-        self.pix_pos = self.getPixPos()
-        self.direction = vec(1, 0)
-    
-    def getPixPos(self):
-        return vec((self.gridPos.x*self.app.cell_width)+self.app.cell_width//2, 
-        (self.gridPos.y*self.app.cell_height)+self.app.cell_height//2)
+        super().__init__(app, pos)
 
     def update(self):
-        self.pix_pos += self.direction
-        if self.canMove():
+        self.pixPos += self.dir
+        if self.checkLegalMove():
             self.move()
-        self.gridPos.x = self.pix_pos.x//self.app.cell_width
-        self.gridPos.y = self.pix_pos.y//self.app.cell_height
+        self.setGridPos()
 
     def draw(self):
-        pygame.draw.circle(self.app.screen, (255, 0, 0), (int(self.pix_pos.x), int(self.pix_pos.y)), 8)
-    
-    def canMove(self):
-        if int(self.pix_pos.x+self.app.cell_width//2) % self.app.cell_width == 0:
-            if self.direction == vec(1, 0) or self.direction == vec(-1, 0):
-                return True
-        if int(self.pix_pos.y+self.app.cell_height//2) % self.app.cell_height == 0:
-            if self.direction == vec(0, 1) or self.direction == vec(0, -1):
-                return True
-        return False
+        pygame.draw.circle(self.app.screen, (255, 0, 0), (int(self.pixPos.x), int(self.pixPos.y)), 8)
     
     def move(self):
-        self.direction = self.getRandomDirection()
+        self.dir = self.getRandomDirection()
     
     def getRandomDirection(self):
         while True:

@@ -4,6 +4,7 @@ from dots import *
 from pygame.math import Vector2 as vec
 from ghost import *
 from view import *
+from item import Item
 
 pygame.init()
 pygame.display.set_caption("Pac-Man")
@@ -26,7 +27,7 @@ class App:
         self.state = 0 #0=start 1=playing 2=game over
         self.load()
         self.player = Player(self, self.playerStart)
-        self.playerLives = self.player.getLifes();
+        self.playerLives = self.player.getLifes()
         self.dot = Dot(self, self.dots)
         self.view = View
         self.makeEnemies()

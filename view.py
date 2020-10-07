@@ -4,7 +4,7 @@ class View:
     def drawBackground(background, screen):
         screen.blit(background, (0, 25))
 
-    def drawLives():
+    def drawPlayerLifes(background, screen):
         pass
 
     def drawScore():
@@ -17,5 +17,11 @@ class View:
         screen.blit(text, (100, 100))
         pygame.display.update()
     
-    def drawPlayerLifes(background, screen):
+    def drawPlayer():
+        pass
+
+    def drawEnemies():
+        pass
+
+    def drawDots():
         pass

@@ -1,10 +1,10 @@
 from random import shuffle, randrange
 import random
  
-def make_maze(w=10, h = 5):
+def make_maze(w, h):
     vis = [[0] * w + [1] for _ in range(h)] + [[1] * (w + 1)]
-    ver = [["|  "] * w + ['|'] for _ in range(h)] + [[]]
-    hor = [["+--"] * w + ['+'] for _ in range(h + 1)]
+    ver = [["1  "] * w + ['1'] for _ in range(h)] + [[]]
+    hor = [["111"] * w + ['1'] for _ in range(h + 1)]
  
     def walk(x, y):
         vis[y][x] = 1
@@ -13,7 +13,7 @@ def make_maze(w=10, h = 5):
         shuffle(d)
         for (xx, yy) in d:
             if vis[yy][xx]: continue
-            if xx == x: hor[max(y, yy)][x] = "+  "
+            if xx == x: hor[max(y, yy)][x] = "1  "
             if yy == y: ver[y][max(x, xx)] = "   "
             walk(xx, yy)
  
@@ -23,6 +23,7 @@ def make_maze(w=10, h = 5):
     for (a, b) in zip(hor, ver):
         s += ''.join(a + ['\n'] + b + ['\n'])
     return s
- 
-if __name__ == '__main__':
-    print(make_maze())
+
+newMaze = make_maze(5, 5)
+newMaze = newMaze.replace(' ', '0')
+print(newMaze)

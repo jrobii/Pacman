@@ -23,7 +23,3 @@ def make_maze(w, h):
     for (a, b) in zip(hor, ver):
         s += ''.join(a + ['\n'] + b + ['\n'])
     return s
-
-newMaze = make_maze(5, 5)
-newMaze = newMaze.replace(' ', '0')
-print(newMaze)

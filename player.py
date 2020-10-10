@@ -1,16 +1,15 @@
 import pygame
 from item import Item
 from pygame.math import Vector2 as vec
-import wall
 yellow = (255, 255, 0)
 
 class Player(Item):
     def __init__(self, app, pos):
         super().__init__(app, pos)
-        self.dir = vec(0, -1)
         self.stored_dir = None
         self.can_move = True
         self.lifes = 3
+        self.score = 0
 
     def getLifes(self):
         return self.lifes
@@ -31,6 +30,20 @@ class Player(Item):
     def removeDot(self):
         if self.gridPos in self.app.dots:
             self.app.dots.remove(self.gridPos)
+            self.score += 5
+
+    def removeLife(self):
+        self.lifes -= 1
+        if self.lifes == 0:
+            self.app.state = 2
+        else:
+            self.gridPos = vec(self.app.playerOrig)
+            self.pixPos = self.getPixPos()
+            self.dir = vec(0, 0)
+            for enemy in self.app.ghosts:
+              enemy.gridPos = vec(enemy.startingPos)
+              enemy.pixPos = enemy.getPixPos()
+              enemy.dir *= 0
 
     def able_to_move(self):
         for wall in self.app.walls:
@@ -39,7 +52,7 @@ class Player(Item):
         return True
 
     def draw(self):
-        pygame.draw.circle(self.app.screen, yellow, (int(self.pixPos.x), int(self.pixPos.y)), self.app.cell_height//2)
+        pygame.draw.circle(self.app.screen, yellow, (int(self.pixPos.x), int(self.pixPos.y)), self.app.cell_height//2-2)
 
     def move(self, dir):
         self.stored_dir = dir 

@@ -5,12 +5,13 @@ from pygame.math import Vector2 as vec
 from ghost import *
 from view import *
 from item import Item
-import wall
+import maze
+import astar
 
 pygame.init()
 pygame.display.set_caption("Pac-Man")
-width = 700
-height = 600
+width = 610
+height = 670
 grey = (107, 107, 107)
 
 class App:
@@ -22,9 +23,10 @@ class App:
         self.dots = []     
         self.ghosts = []
         self.g_pos = []
-        self.cell_width = width//40
-        self.cell_height = height//32
+        self.cell_width = (width-50)//28
+        self.cell_height = (height-50)//30
         self.playerStart = vec()
+        self.playerOrig = vec()
         self.state = 0 #0=start 1=playing 2=game over
         self.load()
         self.player = Player(self, self.playerStart)
@@ -72,24 +74,29 @@ class App:
                     self.player.move(vec(0, 1))
     
     def load(self):
-        #self.background = pygame.image.load('maze.png')
-        #self.background = pygame.transform.scale(self.background, (width, height-50))
+        self.background = pygame.image.load('maze.png')
+        self.background = pygame.transform.scale(self.background, (width-50, height-50))
         
-        with open("maze.txt", "r") as file:
+        with open("maze_info.txt", "r") as file:
             for yidx, line in enumerate(file):
                 for xidx, char in enumerate(line):
                     if char == "1":
                         self.walls.append(vec(xidx, yidx))
-                    elif char == "0":
+                    elif char == "C":
                         self.dots.append(vec(xidx, yidx))
-                    elif char == "2":
+                    elif char in ["2", "3", "4", "5"]:
+                        self.g_pos.append([xidx, yidx])
+                    elif char == "P":
                         self.playerStart = vec(xidx, yidx)
-                    elif char == "4":
-                        self.g_pos.append(vec(xidx, yidx))
+                        self.playerOrig = vec(xidx, yidx)
+                    elif char == "B":
+                        pygame.draw.rect(self.background, (0, 0, 0), (xidx*self.cell_width, yidx*self.cell_height,
+                                                                  self.cell_width, self.cell_height))     
     
     def makeEnemies(self):
-        for pos in self.g_pos:
-            self.ghosts.append(Ghost(self, pos))
+        for num, pos in enumerate(self.g_pos):
+            self.ghosts.append(Ghost(self, vec(pos), num))
+            
 
     def drawGrid(self):
         for x in range(width//self.cell_width):
@@ -99,16 +106,19 @@ class App:
     
     def draw(self):
         self.screen.fill((0, 0, 0))
-        #self.view.drawBackground(self.background, self.screen)
-        #self.view.drawPlayerLifes(self.background, self.screen)
+        self.view.drawBackground(self.background, self.screen)
+        self.view.drawScore(self.screen, str(self.player.score))
+        self.view.drawPlayerLifes(self.screen, str(self.player.getLifes()))
         #self.drawGrid()
         self.player.draw()
         self.dot.draw()
-        for wall in self.walls:
-            pygame.draw.rect(self.screen, (0, 0, 255), (wall[0]*self.cell_width, wall[1]*self.cell_height, self.cell_width, self.cell_height))
+        #for wall in self.walls:
+            #pygame.draw.rect(self.screen, (0, 0, 255), (wall[0]*self.cell_width, wall[1]*self.cell_height, self.cell_width, self.cell_height))
         for ghost in self.ghosts:
             ghost.draw()
             ghost.update()
+            if ghost.gridPos == self.player.gridPos:
+                self.player.removeLife()
         self.player.update()
         self.clock.tick(120)
         pygame.display.update()

@@ -2,8 +2,6 @@
 # as found at https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 from warnings import warn
 import heapq
-import maze
-import random
 
 class Node:
     """
@@ -14,9 +12,9 @@ class Node:
         self.parent = parent
         self.position = position
 
-        self.g = 0 or 2 or 4
-        self.h = 0 or 2 or 4
-        self.f = 0 or 2 or 4
+        self.g = 0
+        self.h = 0
+        self.f = 0
 
     def __eq__(self, other):
         return self.position == other.position
@@ -52,9 +50,9 @@ def astar(maze, start, end, allow_diagonal_movement = False):
 
     # Create start and end node
     start_node = Node(None, start)
-    start_node.g = start_node.h = start_node.f = 0 or 2 or 4
+    start_node.g = start_node.h = start_node.f = 0
     end_node = Node(None, end)
-    end_node.g = end_node.h = end_node.f = 0 or 2 or 4
+    end_node.g = end_node.h = end_node.f = 0
 
     # Initialize both open and closed list
     open_list = []
@@ -66,7 +64,7 @@ def astar(maze, start, end, allow_diagonal_movement = False):
 
     # Adding a stop condition
     outer_iterations = 0
-    max_iterations = (len(maze[0]) * len(maze) // 2)
+    max_iterations = 1000
 
     # what squares do we search
     adjacent_squares = ((0, -1), (0, 1), (-1, 0), (1, 0),)
@@ -133,43 +131,3 @@ def astar(maze, start, end, allow_diagonal_movement = False):
 
     warn("Couldn't get a path to destination")
     return None
-
-def example():
-
-    newMaze = maze.make_maze(10, 15)
-    newMaze = newMaze.replace(' ', '0')
-    for char in newMaze:
-        position = random.randint(0, len(newMaze))
-        if newMaze[position] == "0":
-                newMaze = newMaze[:position] + "2" + newMaze[position + 1:]
-                break
-
-    counter = 0
-    for char in newMaze:
-        if counter == 4:
-            break
-        position = random.randint(0, len(newMaze))
-        if newMaze[position] == "0":
-            newMaze = newMaze[:position] + "4" + newMaze[position + 1:]
-            counter += 1
-
-    with open("maze.txt", "w") as f:
-        f.write(newMaze)
-
-    with open("maze.txt") as text:
-        newArray = [list(line.strip()) for line in text]
-        newArray2 = [[int(i) for i in x] for x in newArray]
-    
-    newArray2.pop()
-    #print(newArray2)
-    
-    start = (1, 1)
-    end = (len(newArray2)-2, len(newArray2[1])-4)
-    #print(end)
-
-
-    path = astar(newArray2, start, end)
-
-    print(path)
-
-example()

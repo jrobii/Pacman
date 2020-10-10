@@ -1,42 +1,70 @@
 import pygame
 import random
+import astar
 from item import Item
 vec = pygame.math.Vector2
 
 class Ghost(Item):
-    def __init__(self, app, pos):
+    def __init__(self, app, pos, num):
         super().__init__(app, pos)
+        self.grid = self.getGrid()
+        self.target = None
+        self.number = num
+        self.personality = self.personality()
+        self.speed = self.setSpeed()
+        self.startingPos = [pos.x, pos.y]
 
     def update(self):
-        self.pixPos += self.dir
-        if self.checkLegalMove():
-            self.move()
-        self.setGridPos()
+        self.target = self.setTarget()
+        if self.target != self.gridPos:
+            self.pixPos += self.dir * self.speed
+            if self.checkLegalMove():
+                self.move()
+            self.setGridPos()
         
+    def getGrid(self):
+        grid = [[0 for x in range(28)] for x in range(30)]
+        for cell in self.app.walls:
+            if cell.x < 28 and cell.y < 30:
+                grid[int(cell.y)][int(cell.x)] = 1
+        return grid
+    
+    def setTarget(self):
+        if self.personality == "speedy" or self.personality == "slow":
+            return self.app.player.gridPos
+    
+    def setSpeed(self):
+        if self.personality in ["speedy", "scared"]:
+            speed = 1.05
+        else:
+            speed = 0.6
+        return speed
 
     def draw(self):
         pygame.draw.circle(self.app.screen, (255, 0, 0), (int(self.pixPos.x), int(self.pixPos.y)), 8)
     
     def move(self):
-        self.dir = self.getRandomDirection()
-        #self.dir = self.getPathDirection()
+        if self.personality == "random":
+            self.dir = self.getRandomDirection()
+        elif self.personality == "slow":
+            self.dir = self.getPathDirection(self.target)
+        elif self.personality == "speedy":
+            self.dir = self.getPathDirection(self.target)
+        elif self.personality == "scared":
+            self.dir = self.getRandomDirection()
     
 
-    def getPathDirection(self):
-        next_cell = self.findNextCell()
+    def getPathDirection(self, target):
+        next_cell = self.findNextCell(target)
         xdir = next_cell[0] - self.gridPos[0]
         ydir = next_cell[1] - self.gridPos[1]
         return vec(xdir, ydir)
     
-    def findNextCell(self):
-        path = self.BFS([int(self.gridPos.x), int(self.gridPos.y)], [int(self.app.player.gridPos.x), int(self.app.player.gridPos.y)])
+    def findNextCell(self, target):
+        path = self.BFS(self.grid, [int(self.gridPos.x), int(self.gridPos.y)], [int(target.x), int(target.y)])
         return path[1]
     
-    def BFS(self, start, target):
-        grid = [[0 for x in range(40)] for x in range(32)]
-        for cell in self.app.walls:
-            if cell.x < 40 and cell.y < 32:
-                grid[int(cell.y)][int(cell.x)] = 1
+    def BFS(self, grid, start, target):
         queue = [start]
         path = []
         visited = []
@@ -64,11 +92,6 @@ class Ghost(Item):
                     shortest.insert(0, step["current"])
         return shortest
 
-
-
-
-
-    
     def getRandomDirection(self):
         while True:
             number = random.randint(-2, 1)
@@ -84,3 +107,13 @@ class Ghost(Item):
             if nextPos not in self.app.walls:
                 break 
         return vec(xdir, ydir)
+    
+    def personality(self):
+        if self.number == 0:
+            return "speedy"
+        elif self.number == 1:
+            return "slow"
+        elif self.number == 2:
+            return "random"
+        else:
+            return "scared"

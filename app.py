@@ -37,7 +37,7 @@ class App:
         self.dot = Dot(self, self.dots)
         self.view = View
         self.makeEnemies()
-        self.score = 2000
+        self.score = 0
         self.run()
         
     def run(self):
@@ -133,6 +133,6 @@ class App:
                 self.player.removeLife()
         self.player.update()
         self.clock.tick(120)
-        self.score -= 0.1
+        self.score += 0.1
         pygame.display.update()
 

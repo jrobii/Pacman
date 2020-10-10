@@ -29,11 +29,13 @@ class Player(Item):
     def removeDot(self):
         if self.gridPos in self.app.dots:
             self.app.dots.remove(self.gridPos)
+            if not self.app.dots:
+                self.app.state = 2
 
     def removeLife(self):
         self.lifes -= 1
         if self.lifes == 0:
-            self.app.state = 2
+            self.app.state == 2
         else:
             self.gridPos = vec(self.app.playerOrig)
             self.pixPos = self.getPixPos()

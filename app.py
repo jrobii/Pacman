@@ -7,8 +7,11 @@ from view import *
 from item import Item
 import maze
 import astar
+import threading
+import time
 
 pygame.init()
+clock = pygame.time.Clock()
 pygame.display.set_caption("Pac-Man")
 width = 610
 height = 670
@@ -34,6 +37,7 @@ class App:
         self.dot = Dot(self, self.dots)
         self.view = View
         self.makeEnemies()
+        self.score = 2000
         self.run()
         
     def run(self):
@@ -45,7 +49,9 @@ class App:
                 self.getEvents()
                 self.draw()
             elif self.state == 2:
-                pass
+                self.getEndEvents();
+                scoretxt = "Your Score: {:.2f}".format(self.score)
+                self.view.drawEndScreen(self.screen, scoretxt)
             else:
                 self.running = False
         pygame.quit()
@@ -58,6 +64,11 @@ class App:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.state = 1
+    
+    def getEndEvents(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
 
     def getEvents(self):
         for event in pygame.event.get():
@@ -72,6 +83,7 @@ class App:
                     self.player.move(vec(0, -1))
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.player.move(vec(0, 1))
+            
     
     def load(self):
         self.background = pygame.image.load('maze.png')
@@ -106,14 +118,14 @@ class App:
     
     def draw(self):
         self.screen.fill((0, 0, 0))
+        
         self.view.drawBackground(self.background, self.screen)
-        self.view.drawScore(self.screen, str(self.player.score))
+        scoretxt = "Current Score: {:.2f}".format(self.score)
+        self.view.drawScore(self.screen, scoretxt)
         self.view.drawPlayerLifes(self.screen, str(self.player.getLifes()))
         #self.drawGrid()
         self.player.draw()
         self.dot.draw()
-        #for wall in self.walls:
-            #pygame.draw.rect(self.screen, (0, 0, 255), (wall[0]*self.cell_width, wall[1]*self.cell_height, self.cell_width, self.cell_height))
         for ghost in self.ghosts:
             ghost.draw()
             ghost.update()
@@ -121,5 +133,6 @@ class App:
                 self.player.removeLife()
         self.player.update()
         self.clock.tick(120)
+        self.score -= 0.1
         pygame.display.update()
 

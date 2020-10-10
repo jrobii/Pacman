@@ -9,7 +9,6 @@ class Player(Item):
         self.stored_dir = None
         self.can_move = True
         self.lifes = 3
-        self.score = 0
 
     def getLifes(self):
         return self.lifes
@@ -30,7 +29,6 @@ class Player(Item):
     def removeDot(self):
         if self.gridPos in self.app.dots:
             self.app.dots.remove(self.gridPos)
-            self.score += 5
 
     def removeLife(self):
         self.lifes -= 1

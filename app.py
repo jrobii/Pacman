@@ -39,21 +39,39 @@ class App:
         self.makeEnemies()
         self.score = 0
         self.run()
+    
+    def getState(self):
+        return self.state
+    
+    def setState(self, value):
+        self.state = value
+
+    def isRunning(self):
+        return self.running
+    
+    def setRunning(self, value):
+        self.running = value
+    
+    def getScore(self):
+        return self.score
+    
+    def setScore(self, value):
+        self.score = value
         
     def run(self):
-        while self.running:
-            if self.state == 0:
+        while self.isRunning() == True:
+            if self.getState() == 0:
                 self.getStartEvents()
                 self.view.drawHomeScreen(self.screen)
-            elif self.state == 1:
+            elif self.getState() == 1:
                 self.getEvents()
                 self.draw()
-            elif self.state == 2:
+            elif self.getState() == 2:
                 self.getEndEvents();
                 scoretxt = "Your Score: {:.2f}".format(self.score)
                 self.view.drawEndScreen(self.screen, scoretxt)
             else:
-                self.running = False
+                self.setRunning(False)
         pygame.quit()
         sys.exit()
 
@@ -63,17 +81,17 @@ class App:
                 self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.state = 1
+                    self.setState(1)
     
     def getEndEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
+                self.setRunning(False)
 
     def getEvents(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
+                self.setRunning(False)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.player.move(vec(-1, 0))
@@ -133,6 +151,6 @@ class App:
                 self.player.removeLife()
         self.player.update()
         self.clock.tick(120)
-        self.score += 0.1
+        self.setScore(0.1)
         pygame.display.update()
 

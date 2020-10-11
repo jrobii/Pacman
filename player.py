@@ -12,6 +12,15 @@ class Player(Item):
 
     def getLifes(self):
         return self.lifes
+
+    def setLifes(self, value):
+        self.lifes = value
+
+    def getDir(self):
+        return self.dir
+    
+    def setDir(self, value):
+        self.dir = value
               
     def update(self):
         if self.checkLegalMove():
@@ -22,7 +31,7 @@ class Player(Item):
             else:
                 self.can_move = self.able_to_move()
         if self.can_move:
-            self.pixPos += self.dir
+            self.pixPos += self.getDir()
         self.setGridPos()
         self.removeDot()
         
@@ -30,16 +39,16 @@ class Player(Item):
         if self.gridPos in self.app.dots:
             self.app.dots.remove(self.gridPos)
             if not self.app.dots:
-                self.app.state = 2
+                self.app.setState(2)
 
     def removeLife(self):
-        self.lifes -= 1
-        if self.lifes == 0:
-            self.app.state == 2
+        self.setLifes(1)
+        if self.getLifes() == 0:
+            self.app.setState(2)
         else:
             self.gridPos = vec(self.app.playerOrig)
             self.pixPos = self.getPixPos()
-            self.dir = vec(0, 0)
+            self.setDir(vec(0, 0))
             for enemy in self.app.ghosts:
               enemy.gridPos = vec(enemy.startingPos)
               enemy.pixPos = enemy.getPixPos()
@@ -55,4 +64,4 @@ class Player(Item):
         pygame.draw.circle(self.app.screen, yellow, (int(self.pixPos.x), int(self.pixPos.y)), self.app.cell_height//2-2)
 
     def move(self, dir):
-        self.stored_dir = dir 
+        self.stored_dir = dir

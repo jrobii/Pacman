@@ -14,10 +14,19 @@ class Ghost(Item):
         self.speed = self.setSpeed()
         self.startingPos = [pos.x, pos.y]
 
+    def getSpeed(self):
+        return self.speed
+    
+    def getDir(self):
+        return self.dir
+    
+    def setDir(self, value):
+        self.dir = value
+
     def update(self):
         self.target = self.setTarget()
         if self.target != self.gridPos:
-            self.pixPos += self.dir * self.speed
+            self.pixPos += self.getDir() * self.speed
             if self.checkLegalMove():
                 self.move()
             self.setGridPos()
@@ -35,9 +44,9 @@ class Ghost(Item):
     
     def setSpeed(self):
         if self.personality in ["speedy", "scared"]:
-            speed = 1.05
+            speed = 1.02
         else:
-            speed = 0.6
+            speed = 0.85
         return speed
 
     def draw(self):
